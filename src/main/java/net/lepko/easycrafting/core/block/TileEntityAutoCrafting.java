@@ -21,11 +21,23 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.List;
 import java.util.Locale;
 
-public class TileEntityAutoCrafting extends TileEntity implements ISidedInventory, IGuiTile {
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+public class TileEntityAutoCrafting extends TileEntity implements ISidedInventory, IGuiTile, IEnergySink {
+
+    private double storedEnergy = 0;
+    private double maxStoredEnergy = 640;
+    private double craftCost = 10;
+    private boolean addedToEnergyNet = false;
 
     private static class FakeContainer extends Container {
         private FakeContainer() {
@@ -143,6 +155,10 @@ public class TileEntityAutoCrafting extends TileEntity implements ISidedInventor
             return false;
         }
 
+        if (storedEnergy < craftCost) {
+            return false;
+        }
+
         boolean[] found = new boolean[9];
         StackReference[] refs = new StackReference[9];
 
@@ -212,6 +228,10 @@ public class TileEntityAutoCrafting extends TileEntity implements ISidedInventor
             }
         }
 
+        if (craftingCompleted) {
+            storedEnergy -= craftCost;
+        }
+
         // restore original items from ghost slots
         InventoryUtils.setContents(craftingGrid, this);
         return craftingCompleted;
@@ -257,6 +277,13 @@ public class TileEntityAutoCrafting extends TileEntity implements ISidedInventor
             lastUpdate = 0;
 
             if (lastCraftingSuccess || inventoryChanged) {
+
+                if (!addedToEnergyNet) {
+                    EnergyTileLoadEvent event = new EnergyTileLoadEvent(this);
+                    MinecraftForge.EVENT_BUS.post(event);
+                    addedToEnergyNet = true;
+                }
+
                 inventoryChanged = false;
 
                 if (mode == Mode.ALWAYS || (mode == Mode.POWERED && poweredNow) || (mode == Mode.UNPOWERED && !poweredNow)) {
@@ -268,6 +295,36 @@ public class TileEntityAutoCrafting extends TileEntity implements ISidedInventor
                 }
             }
         }
+    }
+
+    // IEnergySink methods
+    @Override
+    public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction)
+    {
+        return true;
+    }
+
+    public int getSinkTier()
+    {
+        return 1;
+    }
+
+    @Override
+    public double getDemandedEnergy()
+    {
+        return maxStoredEnergy - storedEnergy;
+    }
+
+    @Override
+    public double injectEnergy(ForgeDirection directionFrom, double amount, double voltage)
+    {
+        double amountToAdd = Math.min(amount, maxStoredEnergy - storedEnergy);
+        if (amountToAdd > 0) {
+            inventoryChanged = true;
+            storedEnergy += amountToAdd;
+        }
+
+        return amount - amountToAdd;
     }
 
     @Override

@@ -14,6 +14,13 @@ buildscript {
         classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
     }
 }
+repositories {
+    maven {
+        name = "ic2"
+        url = "http://maven.ic2.player.to/"
+    }
+}
+
 // *** Load ForgeGradle
 apply plugin: "curseforge"
 apply plugin: "forge"
@@ -51,6 +58,7 @@ minecraft {
 
 dependencies {
     //compile "com.mod-buildcraft:buildcraft:6.0.8:dev"  // adds buildcraft to the dev env
+    compile 'net.industrial-craft:industrialcraft-2:2.2.732-experimental:api'
 }
 
 processResources {
