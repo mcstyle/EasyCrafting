@@ -35,8 +35,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class TileEntityAutoCrafting extends TileEntity implements ISidedInventory, IGuiTile, IEnergySink {
 
     private double storedEnergy = 0;
-    private double maxStoredEnergy = 640;
-    private double craftCost = 10;
+    private double maxStoredEnergy = 6400;
+    private double craftCost = 100;
     private boolean addedToEnergyNet = false;
 
     private static class FakeContainer extends Container {

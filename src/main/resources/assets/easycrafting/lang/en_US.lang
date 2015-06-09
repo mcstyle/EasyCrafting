@@ -1,5 +1,7 @@
 tile.easycrafting:table.easy_crafting.name=Easy Crafting Table
+tile.easycrafting:table.easy_crafting.info=
 tile.easycrafting:table.auto_crafting.name=Auto Crafting Table
+tile.easycrafting:table.auto_crafting.info=Consumes 100 EU for one craft (Capacity 6400 EU)
 
 container.easycrafting:table.auto_crafting=Auto Crafting Table
 

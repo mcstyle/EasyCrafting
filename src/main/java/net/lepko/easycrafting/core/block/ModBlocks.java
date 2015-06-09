@@ -23,7 +23,7 @@ public class ModBlocks {
 
     public static void setupRecipes() {
         GameRegistry.addShapelessRecipe(get("easyCraftingTable"), Blocks.crafting_table, Items.redstone, Items.book);
-        GameRegistry.addShapedRecipe(get("autoCraftingTable"), "rsr", "scs", "rsr", 'r', Items.redstone, 's', Items.iron_ingot, 'c', Blocks.crafting_table);
+        GameRegistry.addShapedRecipe(get("autoCraftingTable"), "rxr", "scs", "rir", 'r', Items.redstone, 'x', ic2.api.item.IC2Items.getItem("electronicCircuit"), 's', ic2.api.item.IC2Items.getItem("ironCableItem"), 'i', Items.iron_ingot, 'c', Blocks.crafting_table);
     }
 
     private static ItemStack get(String name) {

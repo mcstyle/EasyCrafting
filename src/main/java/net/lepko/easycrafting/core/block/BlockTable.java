@@ -52,7 +52,7 @@ public class BlockTable extends BlockContainer {
         // Auto Crafting Table
         icons[1][0] = iconRegister.registerIcon(Ref.addDomain("autoCraftingTable_bottom"));
         icons[1][1] = iconRegister.registerIcon(Ref.addDomain("autoCraftingTable_top"));
-        icons[1][2] = iconRegister.registerIcon(Ref.addDomain("autoCraftingTable_side1"));
+        icons[1][2] = iconRegister.registerIcon(Ref.addDomain("autoCraftingTable_side1ani"));
         icons[1][3] = iconRegister.registerIcon(Ref.addDomain("autoCraftingTable_side2"));
     }
 
