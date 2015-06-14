@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
 
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -260,6 +261,26 @@ public class TileEntityAutoCrafting extends TileEntity implements ISidedInventor
     }
 
     @Override
+    public void invalidate()
+    {
+        if (!worldObj.isRemote && addedToEnergyNet) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            addedToEnergyNet = false;
+        }
+        super.invalidate();
+    }
+
+    @Override
+    public void onChunkUnload() {
+        if (!worldObj.isRemote && addedToEnergyNet) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            addedToEnergyNet = false;
+        }
+
+        super.onChunkUnload();
+    }
+
+    @Override
     public void updateEntity() {
         if (scheduledRecipeCheck) {
             scheduledRecipeCheck = false;
@@ -279,8 +300,7 @@ public class TileEntityAutoCrafting extends TileEntity implements ISidedInventor
             if (lastCraftingSuccess || inventoryChanged) {
 
                 if (!addedToEnergyNet) {
-                    EnergyTileLoadEvent event = new EnergyTileLoadEvent(this);
-                    MinecraftForge.EVENT_BUS.post(event);
+                    MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
                     addedToEnergyNet = true;
                 }
 
